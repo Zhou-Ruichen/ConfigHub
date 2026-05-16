@@ -1,5 +1,8 @@
 # Rendered by ConfigHub for profile {{ .Profile.ID }}. Do not edit by hand;
 # rerun `confighub apply` instead. Login-shell environment for this host.
 
+# Trust system CA store for Node TLS (some local proxies need this).
+export NODE_TLS_REJECT_UNAUTHORIZED=0
+
 # Example: export GOPATH="$HOME/go"
 # Example: export ANTHROPIC_BASE_URL="https://anyrouter.top"

@@ -5,5 +5,8 @@
 # ~/.opencode/bin, and ~/.claude/bin when those directories exist.
 # Only add truly host-specific paths and aliases below.
 
+# Antigravity CLI lives outside the shared bin dirs.
+[[ -d "$HOME/.antigravity/antigravity/bin" ]] && export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+
 # Example: export PATH="$HOME/.lmstudio/bin:$PATH"
 # Example: alias omo='oh-my-opencode-slim'

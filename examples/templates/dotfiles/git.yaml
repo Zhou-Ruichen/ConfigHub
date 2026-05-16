@@ -1,7 +1,7 @@
-id: dotfiles/git-include
+id: dotfiles/git
 domain: dotfiles
-source: dotfiles/git/gitconfig-include.tmpl
-target: ~/.gitconfig
+source: dotfiles/git/confighub.gitconfig.tmpl
+target: ~/.config/confighub/fragments/dotfiles/git/confighub.gitconfig
 mode: "0644"
 delivery:
   sync: true
@@ -11,5 +11,4 @@ safety:
   diff: required
   symlink: reject
   secrets: forbidden
-  merge: managed-section
-  includeStrategy: append-once
+  merge: replace

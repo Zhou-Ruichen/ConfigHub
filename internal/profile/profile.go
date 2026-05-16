@@ -16,6 +16,7 @@ type Profile struct {
 	OS               string          `yaml:"os" json:"os"`
 	Domains          map[string]bool `yaml:"domains" json:"domains"`
 	AllowedTemplates []string        `yaml:"allowedTemplates" json:"allowedTemplates"`
+	Vars             map[string]any  `yaml:"vars,omitempty" json:"vars,omitempty"`
 }
 
 // Load reads a profile from a YAML file and validates the external contract.

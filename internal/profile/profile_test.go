@@ -25,7 +25,10 @@ domains:
   dotfiles: true
 allowedTemplates:
   - ai/claude
+  - dotfiles/git
   - dotfiles/git-include
+vars:
+  example: rendered-by-confighub
 `,
 			want: &Profile{
 				ID:               "macbook",
@@ -33,7 +36,8 @@ allowedTemplates:
 				Role:             "workstation",
 				OS:               "macos",
 				Domains:          map[string]bool{"ai": true, "dotfiles": true},
-				AllowedTemplates: []string{"ai/claude", "dotfiles/git-include"},
+				AllowedTemplates: []string{"ai/claude", "dotfiles/git", "dotfiles/git-include"},
+				Vars:             map[string]any{"example": "rendered-by-confighub"},
 			},
 		},
 		{

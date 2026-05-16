@@ -7,4 +7,7 @@ domains:
   dotfiles: true
 allowedTemplates:
   - ai/claude
+  - dotfiles/git
   - dotfiles/git-include
+vars:
+  example: rendered-by-confighub

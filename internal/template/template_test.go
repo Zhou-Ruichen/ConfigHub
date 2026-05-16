@@ -18,7 +18,7 @@ func TestTemplateParse(t *testing.T) {
 			name: "valid template round trip",
 			input: `id: dotfiles/git-include
 domain: dotfiles
-source: templates/dotfiles/gitconfig-include.tmpl
+source: dotfiles/git/gitconfig-include.tmpl
 target: ~/.gitconfig
 mode: "0644"
 delivery:
@@ -35,7 +35,7 @@ safety:
 			want: &Template{
 				ID:     "dotfiles/git-include",
 				Domain: "dotfiles",
-				Source: "templates/dotfiles/gitconfig-include.tmpl",
+				Source: "dotfiles/git/gitconfig-include.tmpl",
 				Target: "~/.gitconfig",
 				Mode:   "0644",
 				Delivery: Delivery{
@@ -56,7 +56,7 @@ safety:
 			name: "default secrets forbidden",
 			input: `id: dotfiles/git
 domain: dotfiles
-source: templates/dotfiles/gitconfig.tmpl
+source: dotfiles/git/confighub.gitconfig.tmpl
 target: ~/.config/confighub/fragments/dotfiles/git/confighub.gitconfig
 mode: "0644"
 delivery:
@@ -70,7 +70,7 @@ safety:
 			want: &Template{
 				ID:     "dotfiles/git",
 				Domain: "dotfiles",
-				Source: "templates/dotfiles/gitconfig.tmpl",
+				Source: "dotfiles/git/confighub.gitconfig.tmpl",
 				Target: "~/.config/confighub/fragments/dotfiles/git/confighub.gitconfig",
 				Mode:   "0644",
 				Delivery: Delivery{
@@ -133,6 +133,7 @@ safety:
 func TestLoadFixtureTemplates(t *testing.T) {
 	for _, path := range []string{
 		"../../examples/templates/ai/claude.yaml",
+		"../../examples/templates/dotfiles/git.yaml",
 		"../../examples/templates/dotfiles/git-include.yaml",
 	} {
 		t.Run(path, func(t *testing.T) {

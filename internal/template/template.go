@@ -19,13 +19,14 @@ var allowedMergeStrategies = map[string]bool{
 // Template describes one source template, its target, delivery modes, and
 // safety policies.
 type Template struct {
-	ID       string   `yaml:"id" json:"id"`
-	Domain   string   `yaml:"domain" json:"domain"`
-	Source   string   `yaml:"source" json:"source"`
-	Target   string   `yaml:"target" json:"target"`
-	Mode     string   `yaml:"mode" json:"mode"`
-	Delivery Delivery `yaml:"delivery" json:"delivery"`
-	Safety   Safety   `yaml:"safety" json:"safety"`
+	ID           string   `yaml:"id" json:"id"`
+	Domain       string   `yaml:"domain" json:"domain"`
+	Source       string   `yaml:"source" json:"source"`
+	Target       string   `yaml:"target" json:"target"`
+	Mode         string   `yaml:"mode" json:"mode"`
+	Delivery     Delivery `yaml:"delivery" json:"delivery"`
+	Safety       Safety   `yaml:"safety" json:"safety"`
+	EnvAllowlist []string `yaml:"envAllowlist,omitempty" json:"envAllowlist,omitempty"`
 }
 
 // Delivery declares how rendered output can be consumed.

@@ -1,0 +1,14 @@
+id: ai/claude
+domain: ai
+source: templates/ai/claude-settings.tmpl
+target: ~/.claude/settings.json
+mode: "0600"
+delivery:
+  sync: true
+  remote: false
+safety:
+  backup: required
+  diff: required
+  symlink: reject
+  secrets: allowed
+  merge: managed-section

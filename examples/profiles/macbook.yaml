@@ -1,0 +1,10 @@
+id: macbook
+owner: ruichen
+role: workstation
+os: macos
+domains:
+  ai: true
+  dotfiles: true
+allowedTemplates:
+  - ai/claude
+  - dotfiles/git-include

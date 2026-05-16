@@ -1,0 +1,15 @@
+id: dotfiles/git-include
+domain: dotfiles
+source: templates/dotfiles/gitconfig-include.tmpl
+target: ~/.gitconfig
+mode: "0644"
+delivery:
+  sync: true
+  remote: false
+safety:
+  backup: required
+  diff: required
+  symlink: reject
+  secrets: forbidden
+  merge: managed-section
+  includeStrategy: append-once

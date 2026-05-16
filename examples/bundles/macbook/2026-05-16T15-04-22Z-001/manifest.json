@@ -19,7 +19,7 @@
         "diff": "required",
         "symlink": "reject",
         "secrets": "allowed",
-        "merge": "managed-section"
+        "merge": "replace"
       }
     },
     {

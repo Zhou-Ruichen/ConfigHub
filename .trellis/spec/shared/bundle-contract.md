@@ -91,7 +91,7 @@ Remote responses must:
         "diff": "required",
         "symlink": "reject",
         "secrets": "allowed",
-        "merge": "managed-section"
+        "merge": "replace"
       }
     },
     {
@@ -141,4 +141,4 @@ Remote responses must:
 }
 ```
 
-The example demonstrates: a secret-bearing managed-section file, a plain-replace fragment file, an include-line entry using `managed-section` + `append-once`, and one removed file.
+The example demonstrates: a secret-bearing replace-mode JSON file, a plain-replace fragment file, an include-line entry using `managed-section` + `append-once`, and one removed file. JSON targets cannot use `managed-section` in Slice 3 (marker comments are not supported in JSON); they must use `replace` until `deep-merge` lands.

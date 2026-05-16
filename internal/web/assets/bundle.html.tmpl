@@ -1,0 +1,12 @@
+{{ define "content" }}
+<section>
+  <h2>Bundle <code>{{ .Manifest.BundleVersion }}</code></h2>
+  <p>Profile <code>{{ .Manifest.ProfileID }}</code> · created <code>{{ .Manifest.CreatedAt }}</code></p>
+  <p><a href="/api/v1/profiles/{{ .Manifest.ProfileID }}/bundle">Download tar.gz</a> · <a href="/api/v1/profiles/{{ .Manifest.ProfileID }}/bundle/manifest">Manifest JSON</a></p>
+  <h3>Files</h3>
+  {{ if .Manifest.Files }}<table><thead><tr><th>Template</th><th>Bundle path</th><th>Target</th><th>Checksum</th><th>Mode</th></tr></thead><tbody>{{ range .Manifest.Files }}<tr><td><code>{{ .TemplateID }}</code></td><td><code>{{ .BundlePath }}</code></td><td><code>{{ .TargetPath }}</code></td><td><code>{{ .Checksum }}</code></td><td><code>{{ .Mode }}</code></td></tr>{{ end }}</tbody></table>{{ else }}<p>No files.</p>{{ end }}
+  <h3>Removed files</h3>{{ if .Manifest.RemovedFiles }}<table><thead><tr><th>Template</th><th>Target</th><th>Reason</th><th>Previous checksum</th></tr></thead><tbody>{{ range .Manifest.RemovedFiles }}<tr><td><code>{{ .TemplateID }}</code></td><td><code>{{ .TargetPath }}</code></td><td>{{ .Reason }}</td><td><code>{{ .PreviousChecksum }}</code></td></tr>{{ end }}</tbody></table>{{ else }}<p>No removed files.</p>{{ end }}
+  <h3>Signature</h3><p class="muted">Bundle signatures arrive in Slice 5.</p>
+  <h3>Bootstrap</h3><pre id="bootstrap"><code>{{ .Bootstrap }}</code></pre><button type="button" data-copy-target="#bootstrap">Copy</button>
+</section>
+{{ end }}

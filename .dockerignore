@@ -1,0 +1,8 @@
+.trellis/
+.git/
+bundles/
+state/
+*.test
+coverage.txt
+.idea/
+.vscode/

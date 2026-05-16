@@ -1,0 +1,6 @@
+{{ define "content" }}
+<section>
+  <h2>Warnings</h2>
+  {{ if .Warnings }}<ul class="warnings">{{ range .Warnings }}<li>{{ . }}</li>{{ end }}</ul>{{ else }}<p>No warnings detected.</p>{{ end }}
+</section>
+{{ end }}

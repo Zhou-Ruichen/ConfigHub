@@ -1,0 +1,13 @@
+{{ define "content" }}
+<section>
+  <h2>Profiles</h2>
+  {{ if .Profiles }}
+  <table>
+    <thead><tr><th>ID</th><th>Owner</th><th>Role</th><th>Domains</th><th>Bundles</th><th>Last render</th></tr></thead>
+    <tbody>{{ range .Profiles }}
+      <tr><td><a href="/profiles/{{ .ID }}"><code>{{ .ID }}</code></a></td><td>{{ .Owner }}</td><td>{{ .Role }}</td><td>{{ range .Domains }}<span class="badge">{{ . }}</span> {{ end }}</td><td>{{ .BundleCount }}</td><td><code>{{ .LastRenderedAt }}</code></td></tr>
+    {{ end }}</tbody>
+  </table>
+  {{ else }}<p>No profiles found under <code>profiles/</code>.</p>{{ end }}
+</section>
+{{ end }}

@@ -23,10 +23,11 @@ func newRootCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		newStubCommand("serve", "Run the ConfigHub web UI and HTTP API", "confighub serve --bind 127.0.0.1:8787 --root examples"),
+		newServeCommand(),
 		newStubCommand("init", "Configure this client against a ConfigHub hub", "confighub init --from http://127.0.0.1:8787 --profile macbook"),
 		newRenderCommand(),
 		newStubCommand("pull", "Fetch bundle metadata and files from a hub", "confighub pull --from http://127.0.0.1:8787 --profile macbook --dry-run"),
+		newTokenCommand(),
 		newStatusCommand(),
 		newDiffCommand(),
 		newApplyCommand(),

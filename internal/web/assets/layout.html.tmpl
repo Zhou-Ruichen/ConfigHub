@@ -1,0 +1,33 @@
+{{ define "layout" }}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ .Title }} · ConfigHub</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<header>
+  <h1>ConfigHub</h1>
+  <nav aria-label="Main navigation">
+    {{ range .Nav }}<a href="{{ .Href }}">{{ .Label }}</a>{{ end }}
+  </nav>
+</header>
+<main>
+  {{ template "content" .Data }}
+</main>
+<script>
+document.addEventListener('click', function (event) {
+  var button = event.target.closest('[data-copy-target]');
+  if (!button || !navigator.clipboard) return;
+  var target = document.querySelector(button.getAttribute('data-copy-target'));
+  if (!target) return;
+  navigator.clipboard.writeText(target.textContent.trim()).then(function () {
+    var original = button.textContent;
+    button.textContent = 'Copied';
+    setTimeout(function () { button.textContent = original; }, 1200);
+  });
+});
+</script>
+</body>
+</html>{{ end }}

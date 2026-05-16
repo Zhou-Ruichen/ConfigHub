@@ -1,0 +1,8 @@
+{{ define "content" }}
+<section>
+  <h2>Bootstrap <code>{{ .ProfileID }}</code></h2>
+  <p>Run this on a client after creating an appropriate token.</p>
+  <pre id="bootstrap"><code>{{ .Command }}</code></pre>
+  <button type="button" data-copy-target="#bootstrap">Copy</button>
+</section>
+{{ end }}

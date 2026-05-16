@@ -1,0 +1,15 @@
+[Unit]
+Description=ConfigHub web UI and HTTP API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=confighub
+WorkingDirectory=/var/lib/confighub
+ExecStart=/usr/local/bin/confighub serve --bind 127.0.0.1:8787 --root /var/lib/confighub
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

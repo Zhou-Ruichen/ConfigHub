@@ -1,0 +1,4 @@
+config.example.com {
+	# Caddy forwards Authorization by default; keep it enabled for bearer tokens.
+	reverse_proxy 127.0.0.1:8787
+}

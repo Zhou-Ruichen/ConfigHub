@@ -1,0 +1,11 @@
+{{ define "content" }}
+<section>
+  <h2>Profile <code>{{ .Profile.ID }}</code></h2>
+  <dl class="grid"><dt>Owner</dt><dd>{{ .Profile.Owner }}</dd><dt>Role</dt><dd>{{ .Profile.Role }}</dd><dt>Latest bundle</dt><dd>{{ if .LatestBundle }}<a href="/profiles/{{ .Profile.ID }}/bundles/{{ .LatestBundle }}"><code>{{ .LatestBundle }}</code></a>{{ else }}None{{ end }}</dd></dl>
+  <h3>Allowed templates</h3>
+  {{ if .Templates }}<table><thead><tr><th>ID</th><th>Domain</th><th>Target</th><th>Delivery</th><th>Secrets</th></tr></thead><tbody>{{ range .Templates }}<tr><td><code>{{ .ID }}</code></td><td>{{ .Domain }}</td><td><code>{{ .Target }}</code></td><td><code>{{ .Delivery }}</code></td><td><span class="badge {{ .SecretsClass }}">{{ .Secrets }}</span></td></tr>{{ end }}</tbody></table>{{ else }}<p>No allowed templates.</p>{{ end }}
+  <h3>Bootstrap</h3>
+  <pre id="bootstrap"><code>{{ .Bootstrap }}</code></pre><button type="button" data-copy-target="#bootstrap">Copy</button>
+  <h3>Profile YAML</h3><pre><code>{{ .YAML }}</code></pre>
+</section>
+{{ end }}

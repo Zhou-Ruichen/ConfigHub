@@ -1,0 +1,13 @@
+{{ define "content" }}
+<section>
+  <h2>Status</h2>
+  <dl class="grid">
+    <dt>Version</dt><dd><code>{{ .Version }}</code></dd>
+    <dt>Profiles</dt><dd>{{ .ProfileCount }}</dd>
+    <dt>Bundles</dt><dd>{{ .BundleCount }}</dd>
+    <dt>Tokens</dt><dd>{{ .TokenCount }}</dd>
+    <dt>Uptime</dt><dd>{{ .Uptime }}</dd>
+  </dl>
+  <p><a href="/profiles">View profiles</a> · <a href="/warnings">Warnings</a></p>
+</section>
+{{ end }}

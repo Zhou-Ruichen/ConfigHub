@@ -104,3 +104,37 @@ Dispatched Pi (newapi/gpt-5.5, thinking:high) to implement confighub render. Pi 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 4: Slice 3 local apply via Pi
+
+**Date**: 2026-05-16
+**Task**: Slice 3 local apply via Pi
+**Branch**: `main`
+
+### Summary
+
+Dispatched Pi for confighub apply: target path policy with home-rooted allowlist + forbidden patterns (.ssh, .gnupg, history, .cache, sqlite/db/kdbx), managed-section marker block merge with append-once idempotency, atomic write with parent fsync, per-bundle backup dir (mode 0700/0600), apply.log with secret-redacted entries, rollback via state/rollback/<profile>.json, doctor:apply health checks, per-profile apply.lock. Tests cover render->apply->apply(no-op)->rollback, symlink reject + replace, path policy rejection, checksum mismatch (exit 12), removedFiles handling, lock contention. Discovered fixture bug: Slice 1 ai/claude template declared merge: managed-section for JSON target which Slice 3 correctly rejects (no comment-style markers in JSON); fixed fixture YAMLs, fixture manifest, and spec worked example to use merge: replace. Trade-off: ConfigHub now owns ~/.claude/settings.json fully until deep-merge support arrives.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `f1da9a6` | (see git log) |
+| `9609608` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

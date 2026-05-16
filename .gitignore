@@ -13,3 +13,8 @@
 *.test
 *.out
 coverage.txt
+
+# Runtime output (real renders and per-machine state)
+# Fixtures live under examples/bundles/ and stay tracked.
+/bundles/
+/state/

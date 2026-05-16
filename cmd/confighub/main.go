@@ -27,11 +27,11 @@ func newRootCommand() *cobra.Command {
 		newStubCommand("init", "Configure this client against a ConfigHub hub", "confighub init --from http://127.0.0.1:8787 --profile macbook"),
 		newRenderCommand(),
 		newStubCommand("pull", "Fetch bundle metadata and files from a hub", "confighub pull --from http://127.0.0.1:8787 --profile macbook --dry-run"),
-		newStubCommand("status", "Show local ConfigHub state", "confighub status --profile macbook"),
-		newStubCommand("diff", "Compare a bundle with local targets", "confighub diff --bundle examples/bundles/macbook/2026-05-16T15-04-22Z-001"),
-		newStubCommand("apply", "Back up and apply a rendered bundle", "confighub apply --bundle examples/bundles/macbook/2026-05-16T15-04-22Z-001 --dry-run"),
-		newStubCommand("rollback", "Restore the most recent ConfigHub backup", "confighub rollback --profile macbook --dry-run"),
-		newStubCommand("doctor", "Run ConfigHub health checks", "confighub doctor --profile macbook"),
+		newStatusCommand(),
+		newDiffCommand(),
+		newApplyCommand(),
+		newRollbackCommand(),
+		newDoctorCommand(),
 	)
 
 	return cmd

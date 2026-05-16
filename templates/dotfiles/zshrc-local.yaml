@@ -1,0 +1,14 @@
+id: dotfiles/zshrc-local
+domain: dotfiles
+source: dotfiles/zshrc-local.tmpl
+target: ~/.zshrc.local
+mode: "0644"
+delivery:
+  sync: true
+  remote: false
+safety:
+  backup: required
+  diff: required
+  symlink: reject
+  secrets: forbidden
+  merge: replace

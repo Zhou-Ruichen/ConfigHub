@@ -1,0 +1,13 @@
+id: air
+owner: RuichenZhou
+role: workstation
+os: macos
+domains:
+  dotfiles: true
+vars:
+  git_name: "RuichenZhou"
+  git_email: "ruichenzhou@outlook.com"
+allowedTemplates:
+  - dotfiles/gitconfig-local
+  - dotfiles/zshrc-local
+  - dotfiles/zprofile-local

@@ -7,14 +7,21 @@ import (
 )
 
 var homeDotfiles = map[string]bool{
-	".gitconfig":    true,
-	".zshrc":        true,
-	".zshenv":       true,
-	".bashrc":       true,
-	".bash_profile": true,
-	".profile":      true,
-	".tmux.conf":    true,
-	".vimrc":        true,
+	".gitconfig":          true,
+	".gitconfig.local":    true,
+	".zshrc":              true,
+	".zshrc.local":        true,
+	".zshenv":             true,
+	".zshenv.local":       true,
+	".zprofile":           true,
+	".zprofile.local":     true,
+	".bashrc":             true,
+	".bashrc.local":       true,
+	".bash_profile":       true,
+	".bash_profile.local": true,
+	".profile":            true,
+	".tmux.conf":          true,
+	".vimrc":              true,
 }
 
 // ValidateTargetPath expands ~, cleans the result, rejects traversal, and

@@ -29,6 +29,20 @@ Default behavior:
 - require manifest membership;
 - require checksum verification.
 
+Allowlisted bare dotfiles at `$HOME` (paths exactly equal to `$HOME/<name>`):
+
+- `.gitconfig`, `.gitconfig.local`
+- `.zshrc`, `.zshrc.local`
+- `.zshenv`, `.zshenv.local`
+- `.zprofile`, `.zprofile.local`
+- `.bashrc`, `.bashrc.local`
+- `.bash_profile`, `.bash_profile.local`
+- `.profile`
+- `.tmux.conf`
+- `.vimrc`
+
+The paired `.local` variants exist because ConfigHub renders per-device override files that the operator's shared dotfiles (e.g. `~/.gitconfig` `[include]` directive, `~/.zshrc` `source ~/.zshrc.local`) reference.
+
 ### Symlink-managed Dotfiles (stow / chezmoi)
 
 ConfigHub's default symlink rejection means it does not drop-in compose with stow or chezmoi-managed symlinks. Two supported interop options:

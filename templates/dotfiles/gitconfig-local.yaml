@@ -1,0 +1,14 @@
+id: dotfiles/gitconfig-local
+domain: dotfiles
+source: dotfiles/gitconfig-local.tmpl
+target: ~/.gitconfig.local
+mode: "0644"
+delivery:
+  sync: true
+  remote: false
+safety:
+  backup: required
+  diff: required
+  symlink: reject
+  secrets: forbidden
+  merge: replace

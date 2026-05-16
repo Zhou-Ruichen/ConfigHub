@@ -1,0 +1,16 @@
+# Rendered by ConfigHub for profile {{ .Profile.ID }}. Do not edit by hand;
+# rerun `confighub apply` instead. Add only fields ConfigHub does not own.
+
+[user]
+	name = {{ .Vars.git_name }}
+	email = {{ .Vars.git_email }}
+	# signingkey = <fill in if you start signing commits with -S>
+
+[core]
+	autocrlf = input
+
+# Optional per-device proxy overrides:
+# [http]
+#	proxy = http://127.0.0.1:7897
+# [https]
+#	proxy = http://127.0.0.1:7897

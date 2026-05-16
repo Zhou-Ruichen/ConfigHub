@@ -71,3 +71,36 @@ Dispatched Pi (newapi/gpt-5.5 with thinking:high) to implement Slice 1: go mod i
 ### Next Steps
 
 - None - task complete
+
+
+## Session 3: Slice 2 local render via Pi
+
+**Date**: 2026-05-16
+**Task**: Slice 2 local render via Pi
+**Branch**: `main`
+
+### Summary
+
+Dispatched Pi (newapi/gpt-5.5, thinking:high) to implement confighub render. Pi delivered: internal/render with text/template engine + custom funcs (secret errors, env honors allowlist, var reads .Vars), internal/bundle.WriteAtomic with tmp+rename + traversal-safe bundle paths, internal/render.AcquireRenderLock PID file with live/stale distinction, cmd/confighub/render.go wiring (--profile path-or-id, --root, --dry-run, --json), and templates/ tree with .tmpl sources. Slice 1 types extended additively (Vars, EnvAllowlist). Tests cover full render, atomic-rename failure, lock contention, stale-PID, removedFiles across two renders, env allowlist, secret func failure. Real render produced manifest with correct checksums + sorted entries + sourceRevision git:b3de9ca. Two decisions worth noting: (1) Pi kept examples/templates/ in parallel with templates/ to preserve Slice 1 internal/template fixture tests — acceptable but YAML duplication; (2) bundlePathFor hardcodes dotfiles/git-include to match the Slice 1 fixture path, could be data-driven later. Added /bundles/ and /state/ to .gitignore.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `466ec45` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

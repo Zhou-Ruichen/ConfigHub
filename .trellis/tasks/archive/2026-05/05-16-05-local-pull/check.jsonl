@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/shared/bundle-contract.md", "reason": "Manifest schema — verify the Signature field is populated correctly and canonical encoding is stable."}
+{"file": ".trellis/spec/backend/security.md", "reason": "Auth conventions — verify /api/v1/signing-key is correctly unauthenticated and that 401/404 are used per the design (don't leak existence)."}
+{"file": ".trellis/spec/backend/http-api.md", "reason": "Route conventions — verify the new endpoint matches existing patterns."}
+{"file": ".trellis/spec/shared/concurrency.md", "reason": "Atomic write rules — state/hub.json, state/pull/, state/signing-key.json must follow these (temp file → fsync → rename → fsync parent)."}
+{"file": ".trellis/spec/big-question/secret-handling.md", "reason": "Token handling posture — verify pull token storage in hub.json is consistent."}

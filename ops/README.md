@@ -37,6 +37,19 @@ docker run -d --name confighub \
 
 If no token exists, this command fails with exit code 21 by design.
 
+## Slice 5 signing rollout note
+
+After deploying an image with bundle signing support, restart the hub and re-render every served profile before clients run `confighub pull`. Existing pre-Slice-5 bundle directories have `signature: null` in `manifest.json`; the upgraded server signs manifests at serve time, but clients still verify the downloaded archive contents and need fresh archives that include `checksums.json` plus the current manifest contract.
+
+Recommended order for hk-cn2:
+
+```sh
+docker build -t confighub:dev .
+docker save confighub:dev | gzip | ssh hk-cn2 'gunzip | docker load'
+ssh hk-cn2 'docker restart confighub'
+ssh hk-cn2 'docker exec confighub confighub render --profile air --root /var/lib/confighub'
+```
+
 ## Reverse proxy with Caddy
 
 Use `ops/caddy/Caddyfile.example` as a minimal TLS termination example:

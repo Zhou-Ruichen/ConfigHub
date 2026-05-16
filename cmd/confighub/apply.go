@@ -11,6 +11,7 @@ import (
 
 	"github.com/ruichen/config-hub/internal/apply"
 	"github.com/ruichen/config-hub/internal/bundle"
+	"github.com/ruichen/config-hub/internal/pull"
 	"github.com/spf13/cobra"
 )
 
@@ -22,17 +23,18 @@ const (
 
 func newApplyCommand() *cobra.Command {
 	var bundleFlag, profileFlag, rootFlag string
-	var yes, dryRun, jsonOut bool
+	var yes, dryRun, jsonOut, fromPulled bool
 	cmd := &cobra.Command{
 		Use:   "apply --bundle <path-or-version> [--profile <id-or-path>] [--root <dir>] [--yes] [--dry-run] [--json]",
 		Short: "Back up and apply a rendered bundle",
 		Example: "confighub apply --bundle ~/.config/confighub/bundles/macbook/latest --profile macbook --yes\n" +
+			"confighub apply --from-pulled --root ~/.config/confighub --yes\n" +
 			"confighub apply --bundle latest --root examples --dry-run",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) != 0 {
 				return &exitError{code: exitUsage, err: fmt.Errorf("apply does not accept positional arguments")}
 			}
-			root, profileID, bundleDir, home, err := resolveApplyInputs(rootFlag, profileFlag, bundleFlag, true)
+			root, profileID, bundleDir, home, err := resolveApplyInputs(rootFlag, profileFlag, bundleFlag, true, fromPulled)
 			if err != nil {
 				return err
 			}
@@ -59,21 +61,23 @@ func newApplyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&yes, "yes", false, "skip interactive confirmation")
 	cmd.Flags().BoolVar(&dryRun, "dry-run", false, "compute diff but write nothing")
 	cmd.Flags().BoolVar(&jsonOut, "json", false, "print JSON result")
+	cmd.Flags().BoolVar(&fromPulled, "from-pulled", false, "apply the latest successfully pulled bundle")
 	return cmd
 }
 
 func newDiffCommand() *cobra.Command {
 	var bundleFlag, profileFlag, rootFlag string
-	var jsonOut bool
+	var jsonOut, fromPulled bool
 	cmd := &cobra.Command{
-		Use:     "diff --bundle <path-or-version> [--profile <id-or-path>] [--root <dir>] [--json]",
-		Short:   "Compare a bundle with local targets",
-		Example: "confighub diff --bundle latest --profile macbook --root examples",
+		Use:   "diff --bundle <path-or-version> [--profile <id-or-path>] [--root <dir>] [--json]",
+		Short: "Compare a bundle with local targets",
+		Example: "confighub diff --bundle latest --profile macbook --root examples\n" +
+			"confighub diff --from-pulled --root ~/.config/confighub",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) != 0 {
 				return &exitError{code: exitUsage, err: fmt.Errorf("diff does not accept positional arguments")}
 			}
-			root, profileID, bundleDir, home, err := resolveApplyInputs(rootFlag, profileFlag, bundleFlag, true)
+			root, profileID, bundleDir, home, err := resolveApplyInputs(rootFlag, profileFlag, bundleFlag, true, fromPulled)
 			if err != nil {
 				return err
 			}
@@ -99,6 +103,7 @@ func newDiffCommand() *cobra.Command {
 	cmd.Flags().StringVar(&profileFlag, "profile", "", "profile id or YAML path")
 	cmd.Flags().StringVar(&rootFlag, "root", ".", "hub root directory")
 	cmd.Flags().BoolVar(&jsonOut, "json", false, "print JSON result")
+	cmd.Flags().BoolVar(&fromPulled, "from-pulled", false, "diff the latest successfully pulled bundle")
 	return cmd
 }
 
@@ -226,8 +231,11 @@ func newDoctorCommand() *cobra.Command {
 	return cmd
 }
 
-func resolveApplyInputs(rootFlag, profileFlag, bundleFlag string, needBundle bool) (string, string, string, string, error) {
-	if needBundle && bundleFlag == "" {
+func resolveApplyInputs(rootFlag, profileFlag, bundleFlag string, needBundle bool, fromPulled bool) (string, string, string, string, error) {
+	if fromPulled && bundleFlag != "" {
+		return "", "", "", "", &exitError{code: exitUsage, err: fmt.Errorf("--bundle cannot be used with --from-pulled")}
+	}
+	if needBundle && bundleFlag == "" && !fromPulled {
 		return "", "", "", "", &exitError{code: exitUsage, err: fmt.Errorf("--bundle is required")}
 	}
 	root, err := filepath.Abs(rootFlag)
@@ -236,10 +244,22 @@ func resolveApplyInputs(rootFlag, profileFlag, bundleFlag string, needBundle boo
 	}
 	profileID, err := resolveProfileID(root, profileFlag)
 	if err != nil {
-		return "", "", "", "", err
+		if !fromPulled {
+			return "", "", "", "", err
+		}
+		cfg, loadErr := pull.Load(filepath.Join(root, "state"))
+		if loadErr != nil {
+			return "", "", "", "", err
+		}
+		profileID = cfg.Profile
 	}
 	bundleDir := ""
-	if bundleFlag != "" {
+	if fromPulled {
+		bundleDir, err = pull.LatestBundleDir(filepath.Join(root, "state"), profileID)
+		if err != nil {
+			return "", "", "", "", &exitError{code: exitUsage, err: err}
+		}
+	} else if bundleFlag != "" {
 		bundleDir, err = resolveBundleDir(root, profileID, bundleFlag)
 		if err != nil {
 			return "", "", "", "", err

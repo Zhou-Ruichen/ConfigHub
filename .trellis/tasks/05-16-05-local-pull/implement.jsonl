@@ -1,0 +1,9 @@
+{"file": ".trellis/spec/backend/apply-engine.md", "reason": "Slice 3 apply path is reused as-is; understand the contract pulled bundles must satisfy."}
+{"file": ".trellis/spec/backend/state-directory.md", "reason": "New paths (state/hub.json, state/pull/<profile>/, state/signing-key.json) follow the existing state-dir conventions for mode and atomic writes."}
+{"file": ".trellis/spec/backend/http-api.md", "reason": "New /api/v1/signing-key route and signature field on manifest must follow the existing route + response conventions."}
+{"file": ".trellis/spec/backend/security.md", "reason": "Token scoping and auth conventions. The signing-key endpoint is intentionally unauthenticated; double-check this aligns with the spec."}
+{"file": ".trellis/spec/backend/cli.md", "reason": "init, pull, apply --from-pulled, diff --from-pulled must follow existing CLI conventions for flags, exit codes, and output."}
+{"file": ".trellis/spec/shared/bundle-contract.md", "reason": "Manifest schema is the load-bearing contract being extended. The Signature field already exists; this slice populates it."}
+{"file": ".trellis/spec/shared/concurrency.md", "reason": "Atomic write rules (temp file → rename, fsync parent, mode 0600/0700). Pull writes and signing-key writes both follow this."}
+{"file": ".trellis/spec/shared/config-safety.md", "reason": "Apply safety constraints carry over to apply --from-pulled."}
+{"file": ".trellis/spec/big-question/secret-handling.md", "reason": "Token storage in hub.json must match the secret-handling posture documented for Slice 5 onward."}

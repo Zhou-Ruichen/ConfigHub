@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"io"
@@ -15,7 +16,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ruichen/config-hub/internal/bundle"
 	"github.com/ruichen/config-hub/internal/secret"
+	"github.com/ruichen/config-hub/internal/sign"
 )
 
 func TestStatusReturnsExpectedKeys(t *testing.T) {
@@ -160,6 +163,91 @@ func TestLogsDoNotContainPlaintextToken(t *testing.T) {
 	_ = authRequest(srv, "GET", "/api/v1/profiles", plaintext)
 	if strings.Contains(logs.String(), plaintext) {
 		t.Fatalf("logs contain plaintext token: %s", logs.String())
+	}
+}
+
+func TestSigningKeyLifecycleEndpointAndManifestSignature(t *testing.T) {
+	root := testRoot(t)
+	plaintext, _, err := secret.Create(root, "macbook", "pull:macbook")
+	if err != nil {
+		t.Fatalf("Create token: %v", err)
+	}
+	srv := newAuthServer(t, root, nil)
+	keyPath := filepath.Join(root, "state", "signing-key.json")
+	info, err := os.Stat(keyPath)
+	if err != nil {
+		t.Fatalf("signing key not created: %v", err)
+	}
+	if got := info.Mode().Perm(); got != 0o600 {
+		t.Fatalf("signing key mode = %o, want 0600", got)
+	}
+	firstData, err := os.ReadFile(keyPath)
+	if err != nil {
+		t.Fatalf("read signing key: %v", err)
+	}
+	var keyFile map[string]any
+	if err := json.Unmarshal(firstData, &keyFile); err != nil {
+		t.Fatalf("parse signing key: %v", err)
+	}
+	priv, _ := keyFile["privateKey"].(string)
+	pub, _ := keyFile["publicKey"].(string)
+	if priv == "" || pub == "" {
+		t.Fatalf("signing key missing key material: %#v", keyFile)
+	}
+
+	srv2 := newAuthServer(t, root, nil)
+	secondData, err := os.ReadFile(keyPath)
+	if err != nil {
+		t.Fatalf("reread signing key: %v", err)
+	}
+	if !bytes.Equal(firstData, secondData) {
+		t.Fatalf("second server startup rewrote signing key")
+	}
+
+	keyResp := authRequest(srv2, "GET", "/api/v1/signing-key", "")
+	if keyResp.Code != http.StatusOK {
+		t.Fatalf("signing-key code=%d body=%s", keyResp.Code, keyResp.Body.String())
+	}
+	if strings.Contains(keyResp.Body.String(), priv) || strings.Contains(keyResp.Body.String(), "privateKey") {
+		t.Fatalf("signing-key leaked private material: %s", keyResp.Body.String())
+	}
+	var keyBody struct {
+		Algorithm string `json:"algorithm"`
+		PublicKey string `json:"publicKey"`
+	}
+	if err := json.Unmarshal(keyResp.Body.Bytes(), &keyBody); err != nil {
+		t.Fatalf("parse signing-key response: %v", err)
+	}
+	if keyBody.Algorithm != "ed25519" || keyBody.PublicKey != pub {
+		t.Fatalf("signing-key response = %#v, want public key %q", keyBody, pub)
+	}
+	publicBytes, err := base64.StdEncoding.DecodeString(keyBody.PublicKey)
+	if err != nil {
+		t.Fatalf("decode public key: %v", err)
+	}
+
+	manifestResp := authRequest(srv, "GET", "/api/v1/profiles/macbook/bundle/manifest", plaintext)
+	if manifestResp.Code != http.StatusOK {
+		t.Fatalf("manifest code=%d body=%s", manifestResp.Code, manifestResp.Body.String())
+	}
+	var manifest struct {
+		Signature *struct {
+			Algorithm string `json:"algorithm"`
+			Value     string `json:"value"`
+		} `json:"signature"`
+	}
+	if err := json.Unmarshal(manifestResp.Body.Bytes(), &manifest); err != nil {
+		t.Fatalf("parse manifest: %v", err)
+	}
+	if manifest.Signature == nil || manifest.Signature.Algorithm != "ed25519" || manifest.Signature.Value == "" {
+		t.Fatalf("manifest missing signature: %s", manifestResp.Body.String())
+	}
+	parsed, err := bundle.ParseManifest(manifestResp.Body.Bytes())
+	if err != nil {
+		t.Fatalf("ParseManifest signed manifest: %v", err)
+	}
+	if err := sign.VerifyManifest(parsed, parsed.Signature, publicBytes); err != nil {
+		t.Fatalf("VerifyManifest() error = %v", err)
 	}
 }
 

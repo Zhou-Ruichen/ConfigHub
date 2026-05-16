@@ -2,6 +2,7 @@ package server
 
 import (
 	"bytes"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -16,6 +17,7 @@ import (
 	"github.com/ruichen/config-hub/internal/bundle"
 	"github.com/ruichen/config-hub/internal/profile"
 	"github.com/ruichen/config-hub/internal/secret"
+	"github.com/ruichen/config-hub/internal/sign"
 	"github.com/ruichen/config-hub/internal/web"
 )
 
@@ -38,6 +40,7 @@ type Server struct {
 	start        time.Time
 	logger       *log.Logger
 	sessionKey   []byte
+	keypair      *sign.Keypair
 	handler      http.Handler
 }
 
@@ -86,6 +89,9 @@ func NewWithConfig(cfg Config) (*Server, error) {
 		}
 	}
 	s := &Server{rootDir: absRoot, loopbackOnly: cfg.LoopbackOnly, version: version, start: start, logger: logger, sessionKey: key}
+	if err := s.ensureSigningKey(filepath.Join(absRoot, "state")); err != nil {
+		return nil, err
+	}
 	s.handler = s.recoverMiddleware(s.loggingMiddleware(s.routes()))
 	return s, nil
 }
@@ -113,6 +119,7 @@ func IsLoopbackBind(addr string) bool {
 func (s *Server) routes() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/v1/status", s.handleAPIStatus)
+	mux.HandleFunc("GET /api/v1/signing-key", s.handleAPISigningKey)
 	mux.HandleFunc("GET /api/v1/profiles", s.handleAPIProfiles)
 	mux.HandleFunc("GET /api/v1/profiles/", s.handleAPIProfileSubroutes)
 	mux.HandleFunc("GET /", s.handleWeb)
@@ -128,6 +135,14 @@ func (s *Server) handleAPIStatus(w http.ResponseWriter, r *http.Request) {
 		"tokens":   len(tokens),
 		"uptime":   time.Since(s.start).Truncate(time.Second).String(),
 	})
+}
+
+func (s *Server) handleAPISigningKey(w http.ResponseWriter, r *http.Request) {
+	if s.keypair == nil {
+		writeError(w, http.StatusInternalServerError, "internal_error", "signing key unavailable")
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"algorithm": sign.AlgorithmEd25519, "publicKey": base64.StdEncoding.EncodeToString(s.keypair.PublicKey)})
 }
 
 func (s *Server) handleAPIProfiles(w http.ResponseWriter, r *http.Request) {
@@ -201,7 +216,7 @@ func (s *Server) handleAPIBundleRoutes(w http.ResponseWriter, r *http.Request, p
 		return
 	}
 	if len(rest) == 1 && rest[0] == "manifest" {
-		http.ServeFile(w, r, filepath.Join(bundleDir, "manifest.json"))
+		s.serveSignedManifest(w, r, filepath.Join(bundleDir, "manifest.json"))
 		return
 	}
 	writeError(w, http.StatusNotFound, "not_found", "not found")
@@ -269,6 +284,25 @@ func (s *Server) handleAPITemplate(w http.ResponseWriter, r *http.Request, profi
 	w.Header().Set("X-ConfigHub-Bundle", latest)
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(data)
+}
+
+func (s *Server) serveSignedManifest(w http.ResponseWriter, r *http.Request, manifestPath string) {
+	manifest, err := bundle.LoadManifest(manifestPath)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "internal_error", "failed to load manifest")
+		return
+	}
+	if s.keypair == nil {
+		writeError(w, http.StatusInternalServerError, "internal_error", "signing key unavailable")
+		return
+	}
+	sig, err := sign.SignManifest(manifest, s.keypair.PrivateKey)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "internal_error", "failed to sign manifest")
+		return
+	}
+	manifest.Signature = sig
+	writeJSON(w, http.StatusOK, manifest)
 }
 
 func (s *Server) serveBundleArchive(w http.ResponseWriter, r *http.Request, bundleDir string) {

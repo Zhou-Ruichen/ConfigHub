@@ -138,3 +138,36 @@ Dispatched Pi for confighub apply: target path policy with home-rooted allowlist
 ### Next Steps
 
 - None - task complete
+
+
+## Session 5: Slice 4 serve mode + token auth + Dockerfile
+
+**Date**: 2026-05-16
+**Task**: Slice 4 serve mode + token auth + Dockerfile
+**Branch**: `main`
+
+### Summary
+
+Dispatched Pi for confighub serve: HTTP API + server-rendered web UI (7 pages with embedded html/template + minimal copy-button JS), token CRUD with sha256+hmac.Equal lookup and 0600 atomic-rename writes, non-loopback fail-fast on missing tokens (exit 21), TLS warning on plain HTTP non-loopback bind, bundle tar.gz archive with deterministic ordering for stable ETags, direct template read gated by delivery.remote AND scope (secret-bearing 404 unauth). Plus multi-stage Dockerfile (golang:1.22-alpine -> distroless/static), .dockerignore, ops/systemd/confighub.service, ops/caddy/Caddyfile.example, ops/README.md. Smoke verified: fail-fast exit 21 works, loopback serve returns correct JSON for status/profiles, HTML profiles page renders without JS. Pi could not run docker build (no docker in its env); operator validates Dockerfile during hk-cn2 deploy. 4/8 slices done; deployment to hk-cn2 next.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `5e72d08` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

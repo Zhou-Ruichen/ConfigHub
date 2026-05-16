@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Editors / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Go build artifacts (relevant from Slice 1)
+/bin/
+/dist/
+*.test
+*.out
+coverage.txt

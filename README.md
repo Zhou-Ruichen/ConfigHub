@@ -1,5 +1,14 @@
 # ConfigHub
 
+> ⚠️ **Status: Experimental / Learning project. Not used in production.**
+>
+> For real config management see:
+> - **dotfiles** → [`chezmoi`](https://www.chezmoi.io/) (templated dotfiles, encrypted secrets, multi-device)
+> - **MCP servers + skills** → [`cc-switch`](https://github.com/farion1231/cc-switch) (DB + WebDAV sync)
+> - **MCP source distribution** → npm (e.g. [`@galaxy9day/pi-adapter`](https://www.npmjs.com/package/@galaxy9day/pi-adapter))
+>
+> This repo is preserved as a Go / config-distribution learning exercise. No active development.
+
 ConfigHub is a lightweight self-hosted configuration hub for a **single operator with multiple machines**. Deploy it on one machine you control, then publish, inspect, download, sync, and safely apply configuration templates from any of your other machines.
 
 The first template domains are:
